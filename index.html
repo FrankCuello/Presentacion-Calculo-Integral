@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo Integral - Presentación Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+Pro:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a237e;
+            --secondary: #0d47a1;
+            --accent: #00acc1;
+            --dark: #0a0e27;
+            --light: #f5f7fa;
+            --gold: #ffa726;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
+            --gradient-3: linear-gradient(135deg, #00acc1 0%, #0277bd 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* Animación de fondo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 172, 193, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header/Portada */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::after {
+            content: '∫';
+            position: absolute;
+            font-size: 600px;
+            color: rgba(102, 126, 234, 0.05);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-family: 'Playfair Display', serif;
+            z-index: 0;
+        }
+        
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            animation: fadeInUp 1.2s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem;
+            font-weight: 900;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero .subtitle {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .author-info {
+            margin-top: 4rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .author-info h3 {
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+        
+        .author-info p {
+            font-size: 1.1rem;
+            color: #b0bec5;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+        
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--accent);
+        }
+        
+        /* Secciones */
+        .section {
+            min-height: 100vh;
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .section-number {
+            font-size: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: #90a4ae;
+            font-weight: 300;
+        }
+        
+        /* Cards */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .card p {
+            color: #b0bec5;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        
+        /* Fórmulas matemáticas */
+        .formula-box {
+            background: linear-gradient(135deg, rgba(13, 71, 161, 0.2) 0%, rgba(26, 35, 126, 0.2) 100%);
+            border-left: 4px solid var(--accent);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.3rem;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .formula-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Ilustraciones */
+        .illustration {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .illustration svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .illustration-caption {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #78909c;
+            font-style: italic;
+        }
+        
+        /* Ejemplo */
+        .example {
+            background: rgba(0, 172, 193, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 5px solid var(--accent);
+        }
+        
+        .example-title {
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .example-content {
+            color: #cfd8dc;
+            line-height: 1.8;
+        }
+        
+        /* Lista personalizada */
+        .custom-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+        
+        .custom-list li {
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            color: #b0bec5;
+        }
+        
+        .custom-list li::before {
+            content: '∫';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        
+        /* Navegación */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .nav.visible {
+            transform: translateY(0);
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        /* Botón de descarga PDF */
+        .download-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--gradient-1);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            margin-top: 2rem;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 0;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 5rem;
+        }
+        
+        .footer p {
+            color: #78909c;
+        }
+        
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .hero .subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="nav" id="nav">
+        <div class="container">
+            <div class="nav-content">
+                <div style="font-weight: 600; font-size: 1.2rem;">Cálculo Integral</div>
+                <ul class="nav-links">
+                    <li><a href="#areas">Áreas y Distancias</a></li>
+                    <li><a href="#definida">Integral Definida</a></li>
+                    <li><a href="#teorema">Teorema Fundamental</a></li>
+                    <li><a href="#indefinidas">Integrales Indefinidas</a></li>
+                    <li><a href="#sustitucion">Sustitución</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Portada -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Cálculo Integral</h1>
+            <p class="subtitle">TEMA I: INTEGRALES</p>
+            
+            <div class="author-info">
+                <h3>Hecho por</h3>
+                <p><strong>Frank E. Cuello García</strong></p>
+                <p>Matrícula: 23-EISN-8-003</p>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24">
+                <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- 1.1 Áreas y Distancias -->
+    <section class="section" id="areas">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">SECCIÓN 1.1</div>
+                <h2 class="section-title">Áreas y Distancias</h2>
+                <p class="section-subtitle">El concepto fundamental de la integral</p>
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>Concepto de Área</h3>
+                    <p>El cálculo integral nace del problema de calcular áreas bajo curvas. A diferencia de las figuras geométricas simples, las áreas bajo funciones curvas requieren un método de aproximación.</p>
+                    
+                    <div class="illustration">
+                        <svg viewBox="0 0 400 250" style="max-width: 400px;">
+                            <!-- Ejes -->
+                            <line x1="30" y1="220" x2="370" y2="220" stroke="#667eea" stroke-width="2"/>
+                            <line x1="30" y1="220" x2="30" y2="20" stroke="#667eea" stroke-width="2"/>
+                            
+                            <!-- Curva -->
+                            <path d="M 30 180 Q 100 80, 200 100 T 370 140" 
+                                  stroke="#00acc1" stroke-width="3" fill="none"/>
+                            
+                            <!-- Rectángulos de aproximación -->
+                            <rect x="50" y="160" width="40" height="60" fill="rgba(255,167,38,0.3)" stroke="#ffa726"/>
+                            <rect x="90" y="120" width="40" height="100" fill="rgba(255,167,38,0.3)" stroke="#ffa726"/>
+                            <rect x="130" y="100" width="40" height="120" fill="rgba(255,167,38,0.3)" stroke="#ffa726"/>
+                            <rect x="170" y="110" width="40" height="110" fill="rgba(255,167,38,0.3)" stroke="#ffa726"/>
+                            <rect x="210" y="120" width="40" height="100" fill="rgba(255,167,38,0.3)" stroke="#ffa726"/>
+                            <rect x="250" y="130" width="40" height="90" fill="rgba(255,167,38,0.3)" stroke="#ffa726"/>
+                            
+                            <!-- Etiquetas -->
+                            <text x="350" y="240" fill="#90a4ae" font-size="14">x</text>
+                            <text x="10" y="30" fill="#90a4ae" font-size="14">y</text>
+                        </svg>
+                        <p class="illustration-caption">Aproximación del área mediante rectángulos</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Sumas de Riemann</h3>
+                    <p>Dividimos el intervalo en n subintervalos y aproximamos el área con rectángulos. La suma de las áreas de estos rectángulos se conoce como <strong>Suma de Riemann</strong>.</p>
+                    
+                    <div class="formula-box">
+                        S<sub>n</sub> = Σf(x<sub>i</sub>)Δx
+                    </div>
+                    
+                    <p>Donde Δx = (b - a)/n es el ancho de cada subintervalo.</p>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">📝 Ejemplo: Cálculo de distancia</div>
+                <div class="example-content">
+                    <p><strong>Problema:</strong> Un automóvil viaja con velocidad v(t) = 2t m/s. ¿Qué distancia recorre entre t = 0 y t = 5 segundos?</p>
+                    <p><strong>Solución:</strong> Dividimos el intervalo [0, 5] en rectángulos y calculamos:</p>
+                    <div class="formula-box">
+                        Distancia ≈ Σv(t<sub>i</sub>)Δt = Σ(2t<sub>i</sub>)Δt
+                    </div>
+                    <p>A medida que aumentamos el número de rectángulos, nos acercamos al valor exacto: 25 metros.</p>
+                </div>
+            </div>
+            
+            <ul class="custom-list">
+                <li>Cuanto más pequeños sean los intervalos, más precisa será la aproximación</li>
+                <li>El área exacta se obtiene cuando n → ∞</li>
+                <li>Este proceso da lugar al concepto de integral definida</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 1.2 Integral Definida -->
+    <section class="section" id="definida">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">SECCIÓN 1.2</div>
+                <h2 class="section-title">Integral Definida</h2>
+                <p class="section-subtitle">Formalización matemática del área</p>
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>Definición</h3>
+                    <p>La integral definida de f(x) desde a hasta b es el límite de las sumas de Riemann cuando n tiende a infinito:</p>
+                    
+                    <div class="formula-box">
+                        ∫<sub>a</sub><sup>b</sup> f(x)dx = lim<sub>n→∞</sub> Σf(x<sub>i</sub>)Δx
+                    </div>
+                    
+                    <p>Donde:</p>
+                    <ul class="custom-list">
+                        <li><strong>∫</strong> es el símbolo de integral (una S estilizada de "suma")</li>
+                        <li><strong>a</strong> es el límite inferior</li>
+                        <li><strong>b</strong> es el límite superior</li>
+                        <li><strong>f(x)</strong> es el integrando</li>
+                        <li><strong>dx</strong> indica la variable de integración</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>Propiedades</h3>
+                    
+                    <div class="formula-box">
+                        ∫<sub>a</sub><sup>b</sup> [f(x) + g(x)]dx = ∫<sub>a</sub><sup>b</sup> f(x)dx + ∫<sub>a</sub><sup>b</sup> g(x)dx
+                    </div>
+                    
+                    <div class="formula-box">
+                        ∫<sub>a</sub><sup>b</sup> cf(x)dx = c∫<sub>a</sub><sup>b</sup> f(x)dx
+                    </div>
+                    
+                    <div class="formula-box">
+                        ∫<sub>a</sub><sup>b</sup> f(x)dx = -∫<sub>b</sub><sup>a</sup> f(x)dx
+                    </div>
+                    
+                    <div class="formula-box">
+                        ∫<sub>a</sub><sup>b</sup> f(x)dx + ∫<sub>b</sub><sup>c</sup> f(x)dx = ∫<sub>a</sub><sup>c</sup> f(x)dx
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">📝 Ejemplo: Cálculo de integral definida</div>
+                <div class="example-content">
+                    <p><strong>Problema:</strong> Calcular ∫<sub>0</sub><sup>2</sup> x² dx</p>
+                    <p><strong>Solución por sumas de Riemann:</strong></p>
+                    <p>1. Dividimos [0, 2] en n subintervalos de ancho Δx = 2/n</p>
+                    <p>2. Puntos muestra: x<sub>i</sub> = 2i/n</p>
+                    <p>3. Suma de Riemann: S<sub>n</sub> = Σ(2i/n)² · (2/n)</p>
+                    <p>4. Simplificando: S<sub>n</sub> = (8/n³)Σi²</p>
+                    <p>5. Usando la fórmula Σi² = n(n+1)(2n+1)/6</p>
+                    <p>6. Tomando el límite cuando n → ∞:</p>
+                    <div class="formula-box">
+                        ∫<sub>0</sub><sup>2</sup> x² dx = 8/3
+                    </div>
+                </div>
+            </div>
+            
+            <div class="illustration">
+                <svg viewBox="0 0 400 300" style="max-width: 500px;">
+                    <!-- Ejes -->
+                    <line x1="40" y1="260" x2="380" y2="260" stroke="#667eea" stroke-width="2"/>
+                    <line x1="40" y1="260" x2="40" y2="20" stroke="#667eea" stroke-width="2"/>
+                    
+                    <!-- Área bajo la curva -->
+                    <path d="M 40 260 L 80 240 L 120 200 L 160 160 L 200 120 L 240 80 L 280 40 L 280 260 Z" 
+                          fill="rgba(0,172,193,0.3)" stroke="none"/>
+                    
+                    <!-- Curva x² -->
+                    <path d="M 40 260 Q 160 180, 280 40" 
+                          stroke="#00acc1" stroke-width="3" fill="none"/>
+                    
+                    <!-- Límites -->
+                    <line x1="40" y1="265" x2="40" y2="255" stroke="#ffa726" stroke-width="2"/>
+                    <line x1="280" y1="265" x2="280" y2="255" stroke="#ffa726" stroke-width="2"/>
+                    
+                    <!-- Etiquetas -->
+                    <text x="35" y="280" fill="#ffa726" font-size="16">a</text>
+                    <text x="275" y="280" fill="#ffa726" font-size="16">b</text>
+                    <text x="360" y="280" fill="#90a4ae" font-size="14">x</text>
+                    <text x="15" y="30" fill="#90a4ae" font-size="14">y</text>
+                    <text x="140" y="150" fill="#00acc1" font-size="18" font-weight="bold">∫ f(x)dx</text>
+                </svg>
+                <p class="illustration-caption">Área bajo la curva representada por la integral definida</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 1.3 Teorema Fundamental del Cálculo -->
+    <section class="section" id="teorema">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">SECCIÓN 1.3</div>
+                <h2 class="section-title">Teorema Fundamental del Cálculo</h2>
+                <p class="section-subtitle">El puente entre derivadas e integrales</p>
+            </div>
+            
+            <div class="card">
+                <h3>Primera Parte del Teorema</h3>
+                <p>Si f es continua en [a, b] y definimos:</p>
+                
+                <div class="formula-box">
+                    g(x) = ∫<sub>a</sub><sup>x</sup> f(t)dt
+                </div>
+                
+                <p>Entonces g es continua en [a, b], derivable en (a, b), y:</p>
+                
+                <div class="formula-box">
+                    g'(x) = f(x)
+                </div>
+                
+                <p>Es decir: <strong>la derivada de una integral es la función original</strong>.</p>
+            </div>
+            
+            <div class="content-grid" style="margin-top: 3rem;">
+                <div class="card">
+                    <h3>Segunda Parte del Teorema</h3>
+                    <p>Si f es continua en [a, b] y F es cualquier antiderivada de f, es decir F'(x) = f(x), entonces:</p>
+                    
+                    <div class="formula-box">
+                        ∫<sub>a</sub><sup>b</sup> f(x)dx = F(b) - F(a)
+                    </div>
+                    
+                    <p>Notación común: F(x)|<sub>a</sub><sup>b</sup> = F(b) - F(a)</p>
+                </div>
+                
+                <div class="card">
+                    <h3>Importancia</h3>
+                    <p>Este teorema es revolucionario porque:</p>
+                    <ul class="custom-list">
+                        <li>Conecta los dos conceptos principales del cálculo: derivación e integración</li>
+                        <li>Permite calcular integrales definidas sin usar sumas de Riemann</li>
+                        <li>Muestra que integración y derivación son operaciones inversas</li>
+                        <li>Simplifica enormemente los cálculos de áreas</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">📝 Ejemplo: Aplicando el Teorema Fundamental</div>
+                <div class="example-content">
+                    <p><strong>Problema:</strong> Calcular ∫<sub>1</sub><sup>4</sup> x² dx</p>
+                    <p><strong>Solución:</strong></p>
+                    <p>1. Encontramos una antiderivada de f(x) = x²:</p>
+                    <div class="formula-box">
+                        F(x) = x³/3
+                    </div>
+                    <p>2. Aplicamos el Teorema Fundamental:</p>
+                    <div class="formula-box">
+                        ∫<sub>1</sub><sup>4</sup> x² dx = [x³/3]<sub>1</sub><sup>4</sup> = 4³/3 - 1³/3 = 64/3 - 1/3 = 63/3 = 21
+                    </div>
+                    <p><strong>Respuesta:</strong> El área bajo la curva y = x² de x = 1 a x = 4 es 21 unidades cuadradas.</p>
+                </div>
+            </div>
+            
+            <div class="illustration">
+                <svg viewBox="0 0 500 280" style="max-width: 600px;">
+                    <!-- Título -->
+                    <text x="250" y="30" fill="#00acc1" font-size="18" text-anchor="middle" font-weight="bold">
+                        Derivación e Integración: Operaciones Inversas
+                    </text>
+                    
+                    <!-- Flecha hacia abajo (Integración) -->
+                    <path d="M 120 80 L 120 160" stroke="#ffa726" stroke-width="3" fill="none" marker-end="url(#arrowdown)"/>
+                    <text x="130" y="120" fill="#ffa726" font-size="14">Integración</text>
+                    
+                    <!-- Flecha hacia arriba (Derivación) -->
+                    <path d="M 380 160 L 380 80" stroke="#667eea" stroke-width="3" fill="none" marker-end="url(#arrowup)"/>
+                    <text x="270" y="120" fill="#667eea" font-size="14">Derivación</text>
+                    
+                    <!-- Cajas -->
+                    <rect x="50" y="50" width="140" height="50" fill="rgba(102,126,234,0.2)" stroke="#667eea" stroke-width="2" rx="10"/>
+                    <text x="120" y="80" fill="#fff" font-size="16" text-anchor="middle">f(x) = x²</text>
+                    
+                    <rect x="50" y="180" width="140" height="50" fill="rgba(255,167,38,0.2)" stroke="#ffa726" stroke-width="2" rx="10"/>
+                    <text x="120" y="210" fill="#fff" font-size="16" text-anchor="middle">F(x) = x³/3</text>
+                    
+                    <rect x="310" y="50" width="140" height="50" fill="rgba(102,126,234,0.2)" stroke="#667eea" stroke-width="2" rx="10"/>
+                    <text x="380" y="80" fill="#fff" font-size="16" text-anchor="middle">f(x) = x²</text>
+                    
+                    <rect x="310" y="180" width="140" height="50" fill="rgba(255,167,38,0.2)" stroke="#ffa726" stroke-width="2" rx="10"/>
+                    <text x="380" y="210" fill="#fff" font-size="16" text-anchor="middle">F(x) = x³/3</text>
+                    
+                    <!-- Marcadores de flecha -->
+                    <defs>
+                        <marker id="arrowdown" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                            <polygon points="0,0 10,5 0,10" fill="#ffa726"/>
+                        </marker>
+                        <marker id="arrowup" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                            <polygon points="0,0 10,5 0,10" fill="#667eea"/>
+                        </marker>
+                    </defs>
+                </svg>
+                <p class="illustration-caption">Relación inversa entre derivación e integración</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 1.4 Integrales Indefinidas -->
+    <section class="section" id="indefinidas">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">SECCIÓN 1.4</div>
+                <h2 class="section-title">Integrales Indefinidas y Teorema del Cambio Total</h2>
+                <p class="section-subtitle">Antiderivadas y acumulación</p>
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>Integral Indefinida</h3>
+                    <p>Una integral indefinida representa la familia de todas las antiderivadas de una función:</p>
+                    
+                    <div class="formula-box">
+                        ∫f(x)dx = F(x) + C
+                    </div>
+                    
+                    <p>Donde F'(x) = f(x) y C es la <strong>constante de integración</strong>.</p>
+                    
+                    <p><strong>Nota:</strong> A diferencia de la integral definida (que da un número), la integral indefinida da una función.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>Fórmulas Básicas</h3>
+                    
+                    <div class="formula-box">
+                        ∫x<sup>n</sup>dx = (x<sup>n+1</sup>)/(n+1) + C, n ≠ -1
+                    </div>
+                    
+                    <div class="formula-box">
+                        ∫e<sup>x</sup>dx = e<sup>x</sup> + C
+                    </div>
+                    
+                    <div class="formula-box">
+                        ∫(1/x)dx = ln|x| + C
+                    </div>
+                    
+                    <div class="formula-box">
+                        ∫sin(x)dx = -cos(x) + C
+                    </div>
+                    
+                    <div class="formula-box">
+                        ∫cos(x)dx = sin(x) + C
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 3rem;">
+                <h3>Teorema del Cambio Total</h3>
+                <p>La integral de una razón de cambio nos da el cambio total:</p>
+                
+                <div class="formula-box">
+                    ∫<sub>a</sub><sup>b</sup> F'(x)dx = F(b) - F(a)
+                </div>
+                
+                <p><strong>Interpretación física:</strong></p>
+                <ul class="custom-list">
+                    <li>Si v(t) es la velocidad, entonces ∫v(t)dt = desplazamiento total</li>
+                    <li>Si C'(x) es el costo marginal, entonces ∫C'(x)dx = cambio en el costo total</li>
+                    <li>Si r(t) es la tasa de crecimiento, entonces ∫r(t)dt = crecimiento total</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">📝 Ejemplo: Teorema del Cambio Total</div>
+                <div class="example-content">
+                    <p><strong>Problema:</strong> Un tanque de agua se llena a una tasa de r(t) = 5 - 0.2t litros por minuto. ¿Cuánta agua entra al tanque en los primeros 10 minutos?</p>
+                    <p><strong>Solución:</strong></p>
+                    <p>El cambio total es:</p>
+                    <div class="formula-box">
+                        ∫<sub>0</sub><sup>10</sup> (5 - 0.2t)dt
+                    </div>
+                    <p>Calculando:</p>
+                    <div class="formula-box">
+                        = [5t - 0.1t²]<sub>0</sub><sup>10</sup> = (50 - 10) - 0 = 40 litros
+                    </div>
+                    <p><strong>Respuesta:</strong> Entran 40 litros de agua en los primeros 10 minutos.</p>
+                </div>
+            </div>
+            
+            <div class="illustration">
+                <svg viewBox="0 0 450 300" style="max-width: 550px;">
+                    <!-- Ejes -->
+                    <line x1="40" y1="250" x2="420" y2="250" stroke="#667eea" stroke-width="2"/>
+                    <line x1="40" y1="250" x2="40" y2="30" stroke="#667eea" stroke-width="2"/>
+                    
+                    <!-- Múltiples curvas (familia de antiderivadas) -->
+                    <path d="M 40 200 Q 150 120, 260 150 T 420 100" 
+                          stroke="rgba(0,172,193,0.4)" stroke-width="2" fill="none"/>
+                    <path d="M 40 170 Q 150 90, 260 120 T 420 70" 
+                          stroke="rgba(0,172,193,0.6)" stroke-width="2" fill="none"/>
+                    <path d="M 40 230 Q 150 150, 260 180 T 420 130" 
+                          stroke="rgba(0,172,193,0.8)" stroke-width="2" fill="none"/>
+                    <path d="M 40 215 Q 150 135, 260 165 T 420 115" 
+                          stroke="#00acc1" stroke-width="3" fill="none"/>
+                    
+                    <!-- Etiquetas -->
+                    <text x="390" y="270" fill="#90a4ae" font-size="14">x</text>
+                    <text x="15" y="40" fill="#90a4ae" font-size="14">y</text>
+                    <text x="320" y="90" fill="#00acc1" font-size="14">F(x) + C₁</text>
+                    <text x="320" y="120" fill="rgba(0,172,193,0.8)" font-size="14">F(x) + C₂</text>
+                    <text x="320" y="150" fill="rgba(0,172,193,0.6)" font-size="14">F(x) + C₃</text>
+                    <text x="320" y="180" fill="rgba(0,172,193,0.4)" font-size="14">F(x) + C₄</text>
+                </svg>
+                <p class="illustration-caption">Familia de antiderivadas difiriendo por una constante</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 1.5 Regla de la Sustitución -->
+    <section class="section" id="sustitucion">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">SECCIÓN 1.5</div>
+                <h2 class="section-title">Regla de la Sustitución</h2>
+                <p class="section-subtitle">Técnica fundamental de integración</p>
+            </div>
+            
+            <div class="card">
+                <h3>Regla de la Cadena Inversa</h3>
+                <p>La sustitución es la técnica de integración que corresponde a la regla de la cadena para derivadas:</p>
+                
+                <div class="formula-box">
+                    ∫f(g(x))g'(x)dx = ∫f(u)du
+                </div>
+                
+                <p>Donde u = g(x) y du = g'(x)dx</p>
+            </div>
+            
+            <div class="content-grid" style="margin-top: 3rem;">
+                <div class="card">
+                    <h3>Proceso de Sustitución</h3>
+                    <ul class="custom-list">
+                        <li><strong>Paso 1:</strong> Identificar u = g(x) dentro del integrando</li>
+                        <li><strong>Paso 2:</strong> Calcular du = g'(x)dx</li>
+                        <li><strong>Paso 3:</strong> Sustituir en la integral original</li>
+                        <li><strong>Paso 4:</strong> Integrar respecto a u</li>
+                        <li><strong>Paso 5:</strong> Sustituir de vuelta u = g(x)</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>Para Integrales Definidas</h3>
+                    <p>Cuando usamos sustitución en integrales definidas, tenemos dos opciones:</p>
+                    
+                    <p><strong>Opción 1:</strong> Cambiar los límites de integración</p>
+                    <div class="formula-box">
+                        ∫<sub>a</sub><sup>b</sup> f(g(x))g'(x)dx = ∫<sub>g(a)</sub><sup>g(b)</sup> f(u)du
+                    </div>
+                    
+                    <p><strong>Opción 2:</strong> Mantener los límites y sustituir de vuelta</p>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">📝 Ejemplo 1: Sustitución Simple</div>
+                <div class="example-content">
+                    <p><strong>Problema:</strong> Calcular ∫2x·e<sup>x²</sup>dx</p>
+                    <p><strong>Solución:</strong></p>
+                    <p>1. Hacemos u = x², entonces du = 2x dx</p>
+                    <p>2. La integral se convierte en:</p>
+                    <div class="formula-box">
+                        ∫2x·e<sup>x²</sup>dx = ∫e<sup>u</sup>du = e<sup>u</sup> + C
+                    </div>
+                    <p>3. Sustituyendo de vuelta:</p>
+                    <div class="formula-box">
+                        = e<sup>x²</sup> + C
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">📝 Ejemplo 2: Sustitución con Integral Definida</div>
+                <div class="example-content">
+                    <p><strong>Problema:</strong> Calcular ∫<sub>0</sub><sup>1</sup> x√(1 + x²)dx</p>
+                    <p><strong>Solución:</strong></p>
+                    <p>1. Hacemos u = 1 + x², entonces du = 2x dx, por lo que x dx = du/2</p>
+                    <p>2. Cambiamos límites: cuando x = 0, u = 1; cuando x = 1, u = 2</p>
+                    <p>3. La integral se convierte en:</p>
+                    <div class="formula-box">
+                        ∫<sub>1</sub><sup>2</sup> √u · (du/2) = (1/2)∫<sub>1</sub><sup>2</sup> u<sup>1/2</sup>du
+                    </div>
+                    <p>4. Integrando:</p>
+                    <div class="formula-box">
+                        = (1/2)[(2/3)u<sup>3/2</sup>]<sub>1</sub><sup>2</sup> = (1/3)[2<sup>3/2</sup> - 1] = (1/3)[2√2 - 1]
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 3rem;">
+                <h3>Casos Comunes de Sustitución</h3>
+                
+                <div class="formula-box">
+                    ∫sin<sup>n</sup>(x)cos(x)dx → u = sin(x)
+                </div>
+                
+                <div class="formula-box">
+                    ∫tan(x)dx = ∫(sin(x)/cos(x))dx → u = cos(x)
+                </div>
+                
+                <div class="formula-box">
+                    ∫f(ax + b)dx → u = ax + b
+                </div>
+                
+                <div class="formula-box">
+                    ∫x·f(x²)dx → u = x²
+                </div>
+            </div>
+            
+            <div class="illustration">
+                <svg viewBox="0 0 500 350" style="max-width: 600px;">
+                    <!-- Título -->
+                    <text x="250" y="30" fill="#00acc1" font-size="20" text-anchor="middle" font-weight="bold">
+                        Proceso de Sustitución
+                    </text>
+                    
+                    <!-- Paso 1 -->
+                    <rect x="50" y="60" width="180" height="50" fill="rgba(102,126,234,0.2)" stroke="#667eea" stroke-width="2" rx="10"/>
+                    <text x="140" y="90" fill="#fff" font-size="14" text-anchor="middle">∫ f(g(x))g'(x)dx</text>
+                    
+                    <!-- Flecha 1 -->
+                    <path d="M 140 110 L 140 140" stroke="#ffa726" stroke-width="3" marker-end="url(#arrow1)"/>
+                    <text x="150" y="130" fill="#ffa726" font-size="12">u = g(x)</text>
+                    
+                    <!-- Paso 2 -->
+                    <rect x="50" y="140" width="180" height="50" fill="rgba(255,167,38,0.2)" stroke="#ffa726" stroke-width="2" rx="10"/>
+                    <text x="140" y="170" fill="#fff" font-size="14" text-anchor="middle">∫ f(u)du</text>
+                    
+                    <!-- Flecha 2 -->
+                    <path d="M 140 190 L 140 220" stroke="#00acc1" stroke-width="3" marker-end="url(#arrow2)"/>
+                    <text x="150" y="210" fill="#00acc1" font-size="12">Integrar</text>
+                    
+                    <!-- Paso 3 -->
+                    <rect x="50" y="220" width="180" height="50" fill="rgba(0,172,193,0.2)" stroke="#00acc1" stroke-width="2" rx="10"/>
+                    <text x="140" y="250" fill="#fff" font-size="14" text-anchor="middle">F(u) + C</text>
+                    
+                    <!-- Flecha 3 -->
+                    <path d="M 140 270 L 140 300" stroke="#667eea" stroke-width="3" marker-end="url(#arrow3)"/>
+                    <text x="110" y="290" fill="#667eea" font-size="12">Sustituir u</text>
+                    
+                    <!-- Paso 4 -->
+                    <rect x="50" y="300" width="180" height="50" fill="rgba(102,126,234,0.2)" stroke="#667eea" stroke-width="2" rx="10"/>
+                    <text x="140" y="330" fill="#fff" font-size="14" text-anchor="middle">F(g(x)) + C</text>
+                    
+                    <!-- Ejemplo a la derecha -->
+                    <text x="320" y="70" fill="#90a4ae" font-size="12">Ejemplo:</text>
+                    <text x="320" y="95" fill="#fff" font-size="13">∫ 2xe^(x²)dx</text>
+                    
+                    <text x="320" y="150" fill="#fff" font-size="13">u = x², du = 2xdx</text>
+                    
+                    <text x="320" y="175" fill="#fff" font-size="13">∫ e^u du</text>
+                    
+                    <text x="320" y="235" fill="#fff" font-size="13">e^u + C</text>
+                    
+                    <text x="320" y="315" fill="#fff" font-size="13">e^(x²) + C</text>
+                    
+                    <!-- Marcadores -->
+                    <defs>
+                        <marker id="arrow1" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                            <polygon points="0,0 10,5 0,10" fill="#ffa726"/>
+                        </marker>
+                        <marker id="arrow2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                            <polygon points="0,0 10,5 0,10" fill="#00acc1"/>
+                        </marker>
+                        <marker id="arrow3" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                            <polygon points="0,0 10,5 0,10" fill="#667eea"/>
+                        </marker>
+                    </defs>
+                </svg>
+                <p class="illustration-caption">Diagrama del proceso de sustitución paso a paso</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de descarga -->
+    <section class="section" style="min-height: 50vh;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Recursos Adicionales</h2>
+                <p class="section-subtitle">Material de apoyo para tu estudio</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                <p style="font-size: 1.2rem; margin-bottom: 2rem; color: #b0bec5;">
+                    Para una versión en PDF de esta presentación o para practicar más ejercicios, 
+                    te recomendamos consultar recursos adicionales de cálculo integral.
+                </p>
+                
+                <div style="background: rgba(255,255,255,0.03); padding: 3rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); max-width: 600px; margin: 0 auto;">
+                    <h3 style="color: var(--gold); margin-bottom: 1.5rem;">Recursos Recomendados:</h3>
+                    <ul class="custom-list" style="text-align: left;">
+                        <li>Libro: "Cálculo" de James Stewart</li>
+                        <li>Khan Academy - Cálculo Integral</li>
+                        <li>MIT OpenCourseWare - Cálculo</li>
+                        <li>Wolfram Alpha para verificar tus integrales</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Frank E. Cuello García | Matrícula: 23-EISN-8-003</p>
+            <p style="margin-top: 0.5rem;">Presentación Digital - Cálculo Integral</p>
+        </div>
+    </footer>
+
+    <script>
+        // Navegación visible al hacer scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('visible');
+            } else {
+                nav.classList.remove('visible');
+            }
+        });
+        
+        // Smooth scroll para enlaces de navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Animación de entrada para las tarjetas
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.card, .example, .illustration').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
